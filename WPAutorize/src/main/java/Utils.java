@@ -68,15 +68,28 @@ public class Utils {
         return "";
     }
 
-    //If a string has three or more numbers (confirms nonces)
-    public static boolean hasNumbers(String string){
-        int count = 0;
+    //If a string contains a lowercase letter, a number, and no special chars or uppercase letters
+    public static boolean isNonce(String string){
+        boolean hasSpecialChars = false, hasNumber = false, hasCharacter = false;
         for(char chr : string.toCharArray()){
             if(Character.isDigit(chr)){
-                count++;
+                hasNumber = true;
+                break;
             }
         }
-        return count >= 3;
+        for(char chr : string.toCharArray()){
+            if(Character.isLowerCase(chr)){
+                hasCharacter = true;
+                break;
+            }
+        }
+        for(char chr : string.toCharArray()){
+            if((!Character.isLetterOrDigit(chr)) || Character.isUpperCase(chr)){
+                hasSpecialChars = true;
+                break;
+            }
+        }
+        return hasNumber && hasCharacter && (!hasSpecialChars);
     }
 
     //Get the first nonce in a string
@@ -84,7 +97,7 @@ public class Utils {
         Matcher nonceMatcher = noncePattern.matcher(toSearch);
         if(nonceMatcher.find()){
             String nonce = nonceMatcher.group();
-            if(hasNumbers(nonce)){
+            if(isNonce(nonce)){
                 return nonce;
             }
         }
@@ -97,7 +110,7 @@ public class Utils {
         List<String> nonces = new ArrayList<>();
         while(nonceMatcher.find()){
             String nonce = nonceMatcher.group();
-            if(hasNumbers(nonce)) {
+            if(isNonce(nonce)) {
                 nonces.add(nonce);
             }
         }
